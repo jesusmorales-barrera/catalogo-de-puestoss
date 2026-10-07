@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Variables y secretos
+.env
+.env.*
+*.key
+*.pem
+
+# Archivos de entrada y salida
+entrada/
+salida/
+
+# Temporales
+*.tmp
+*.log
+~$*
+
+# VS Code
+.vscode/
+
+# Sistema
+Thumbs.db
+.DS_Store
+
+
+muestras/

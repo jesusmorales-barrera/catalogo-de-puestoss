@@ -1,0 +1,40 @@
+services:
+  catalogo-puestos:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: catalogo-puestos:2.8
+    container_name: catalogo-puestos
+    volumes:
+      - ./entrada:/datos:ro
+      - ./salida:/salida
+    command:
+      - /datos/puestos_unificados.json
+      - --logo
+      - /app/ssh_logo_recortado.png
+      - --salida
+      - /salida/catalogo_puestos.docx
+    restart: "no"
+  editor-catalogo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: catalogo-puestos:2.8
+    container_name: editor-catalogo
+    entrypoint: ["python", "/app/editor_catalogo/editor_catalogo.py"]
+    command:
+      - --json
+      - /datos/puestos_unificados.json
+      - --output-dir
+      - /salida
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8765"
+    volumes:
+      - ./entrada:/datos
+      - ./salida:/salida
+      - ./editor_catalogo:/app/editor_catalogo:ro
+    ports:
+      - "8765:8765"
+    restart: unless-stopped

@@ -1,0 +1,6 @@
+salida/
+__pycache__/
+*.pyc
+*.pyo
+.git/
+.gitignore
