@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: jmoralesbarrera/catalogo-puestos:2.9
+    image: jmoralesbarrrera/catalogo-puestos:2.9
     container_name: catalogo-puestos
     volumes:
       - ./entrada:/datos:ro
@@ -19,7 +19,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: jmoralesbarrera/catalogo-puestos:2.9
+    image: jmoralesbarrrera/catalogo-puestos:2.9
     container_name: editor-catalogo
     entrypoint: ["python", "/app/editor_catalogo/editor_catalogo.py"]
     command:
