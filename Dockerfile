@@ -14,7 +14,7 @@ COPY generar_catalogo.py /app/generar_catalogo.py
 COPY editor_catalogo /app/editor_catalogo
 COPY ssh_logo_recortado.png /app/ssh_logo_recortado.png
 
-# La imagen 2.8 incluye generación PDF desde el editor web.
+# La imagen 2.9 incluye generación PDF desde el editor web.
 RUN grep -q 'add_section_bar(doc, "REQUISITOS")' /app/generar_catalogo.py \
         && grep -q 'set_record_header' /app/generar_catalogo.py \
         && grep -q 'Inches(3.05)' /app/generar_catalogo.py \
