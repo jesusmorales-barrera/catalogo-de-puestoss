@@ -1,0 +1,16 @@
+{
+  "registros": [
+    {
+      "fila_excel": 9001,
+      "puesto": "Coordinación ficticia de archivo",
+      "funciones_genericas": [
+        "Coordinar la integración de reportes mensuales.",
+        "Verificar la correcta organización de expedientes.",
+        "  verificar   la correcta organización de expedientes. ",
+        "Dar seguimiento a solicitudes internas."
+      ],
+      "conocimientos": null
+    }
+  ],
+  "historial_cambios": []
+}
