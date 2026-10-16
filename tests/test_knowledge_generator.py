@@ -76,22 +76,22 @@ class GenerationTests(unittest.TestCase):
             ("Función A", "Función B"),
         )
         self.assertEqual(source, snapshot)
-        self.assertLessEqual(proposal.word_count, 80)
+        self.assertLessEqual(proposal.word_count, 200)
         self.assertEqual(len(proposal.source_digest), 64)
 
-    def test_accepts_exactly_80_words(self):
-        provider = SimulatedProvider(response_with_word_count(80))
+    def test_accepts_exactly_200_words(self):
+        provider = SimulatedProvider(response_with_word_count(200))
         proposal = KnowledgeGenerator(provider).generate("1", "Puesto", ["Función"])
-        self.assertEqual(proposal.word_count, 80)
+        self.assertEqual(proposal.word_count, 200)
         self.assertEqual(provider.call_count, 1)
 
-    def test_rejects_81_words_without_truncating_or_retrying(self):
-        response = response_with_word_count(81)
+    def test_rejects_201_words_without_truncating_or_retrying(self):
+        response = response_with_word_count(201)
         provider = SimulatedProvider(response)
         with self.assertRaises(WordLimitExceededError):
             KnowledgeGenerator(provider).generate("1", "Puesto", ["Función"])
         self.assertEqual(provider.call_count, 1)
-        self.assertEqual(len(response.tecnicos), 81)
+        self.assertEqual(len(response.tecnicos), 201)
 
     def test_rejects_incorrect_categories(self):
         provider = SimulatedProvider(

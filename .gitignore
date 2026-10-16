@@ -32,3 +32,12 @@ Thumbs.db
 
 
 muestras/
+# Datos de demostración y respaldos
+demo_ficticia/
+*.bak
+
+# Archivos temporales de pruebas
+.pytest_cache/
+
+# Configuración local de agentes OpenCode
+.opencode/

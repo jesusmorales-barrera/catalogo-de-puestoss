@@ -1,6 +1,36 @@
+﻿# Datos y documentos
+entrada/
 salida/
+demo_ficticia/
+
+# Entornos virtuales y archivos Python
+.venv/
+venv/
 __pycache__/
 *.pyc
 *.pyo
+.pytest_cache/
+
+# Git
 .git/
 .gitignore
+
+# Credenciales y configuraciones privadas
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Archivos temporales y respaldos
+*.bak
+*.tmp
+*.log
+
+# Configuración local de agentes
+.opencode/
+
+**/*.bak
+**/__pycache__/
+**/*.pyc
+editor_catalogo/catalogo_conocimientos_ficticio.json

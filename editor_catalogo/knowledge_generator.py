@@ -209,7 +209,7 @@ class KnowledgeGenerator:
         self,
         provider: AIProvider,
         *,
-        max_words: int = 80,
+        max_words: int = 200,
         max_functions: int = 50,
         max_characters: int = 12_000,
     ):

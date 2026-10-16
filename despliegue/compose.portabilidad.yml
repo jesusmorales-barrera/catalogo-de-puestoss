@@ -1,0 +1,18 @@
+services:
+  editor-catalogo:
+    image: catalogo-puestos:3.0-demo
+    container_name: editor-cedulas-portabilidad-demo
+    ports: !override
+      - "8767:8765"
+    volumes: !override
+      - ./entrada:/datos
+      - ./salida:/salida
+    command:
+      - --json
+      - /datos/puestos_demo.json
+      - --output-dir
+      - /salida
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8765"

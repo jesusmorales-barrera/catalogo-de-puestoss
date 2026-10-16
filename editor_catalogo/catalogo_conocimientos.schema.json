@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/catalogo-conocimientos.schema.json",
+  "title": "Catálogo auxiliar de conocimientos de referencia",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dataset_type", "schema_version", "catalog_version", "generated_at", "categories", "sources", "knowledge", "selection_records"],
+  "properties": {
+    "dataset_type": {"enum": ["fixture", "production"]},
+    "schema_version": {"const": "1.0"},
+    "catalog_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "generated_at": {"$ref": "#/$defs/rfc3339Timestamp"},
+    "categories": {
+      "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "definition"],
+        "properties": {
+          "id": {"enum": ["tecnicos", "administrativos", "normativos"]},
+          "definition": {"type": "string", "minLength": 1, "maxLength": 2000, "pattern": ".*\\S.*"}
+        }
+      }
+    },
+    "sources": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/source"}},
+    "knowledge": {"type": "array", "maxItems": 5000, "items": {"$ref": "#/$defs/knowledge"}},
+    "selection_records": {"type": "array", "maxItems": 20000, "items": {"$ref": "#/$defs/selectionRecord"}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"dataset_type": {"const": "fixture"}}, "required": ["dataset_type"]},
+      "then": {
+        "properties": {
+          "sources": {"items": {"properties": {"fictitious": {"const": true}}}},
+          "knowledge": {"items": {"allOf": [
+            {"properties": {"fictitious": {"const": true}}},
+            {"if": {"properties": {"status": {"const": "approved"}}}, "then": {"properties": {"global_approval": {"properties": {"fictitious": {"const": true}}}}}}
+          ]}},
+          "selection_records": {"items": {"properties": {"fictitious": {"const": true}}}}
+        }
+      },
+      "else": {
+        "properties": {
+          "sources": {"items": {"properties": {"fictitious": {"const": false}}}},
+          "knowledge": {"items": {"allOf": [
+            {"properties": {"fictitious": {"const": false}}},
+            {"if": {"properties": {"status": {"const": "approved"}}}, "then": {"properties": {"global_approval": {"properties": {"fictitious": {"const": false}}}}}}
+          ]}},
+          "selection_records": {"items": {"properties": {"fictitious": {"const": false}}}}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "text": {"type": "string", "minLength": 1, "maxLength": 200, "pattern": ".*\\S.*"},
+    "rfc3339Timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?!.*-00:00$)[0-9]{4}-[0-9]{2}-[0-9]{2}T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](?:\\.[0-9]+)?(?:Z|[+-](?:(?:0[0-9]|1[0-3]):[0-5][0-9]|14:00))$"
+    },
+    "texts": {"type": "array", "items": {"$ref": "#/$defs/text"}},
+    "approval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scope", "reviewer_type", "reviewer_id", "approved_at", "fictitious"],
+      "properties": {
+        "scope": {"const": "global"}, "reviewer_type": {"const": "human"},
+        "reviewer_id": {"$ref": "#/$defs/text"},
+        "approved_at": {"$ref": "#/$defs/rfc3339Timestamp"},
+        "fictitious": {"type": "boolean"}
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "title", "document_type", "version", "status", "fictitious"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^FUE-FIC-[0-9]{6}$"},
+        "title": {"$ref": "#/$defs/text"}, "document_type": {"$ref": "#/$defs/text"},
+        "version": {"$ref": "#/$defs/text"},
+        "status": {"enum": ["active", "inactive", "superseded"]},
+        "fictitious": {"const": true}
+      }
+    },
+    "origin": {
+      "type": "object", "additionalProperties": false, "required": ["type"],
+      "properties": {"type": {"enum": ["human", "ai"]}, "model": {"$ref": "#/$defs/text"}},
+      "allOf": [{"if": {"properties": {"type": {"const": "ai"}}}, "then": {"required": ["model"]}}]
+    },
+    "knowledge": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "category", "preferred_label", "definition", "domains", "aliases", "excluded_meanings", "source_ids", "status", "origin", "global_approval", "revision", "fictitious"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^CON-[0-9]{6}$"},
+        "category": {"enum": ["tecnicos", "administrativos", "normativos"]},
+        "preferred_label": {"$ref": "#/$defs/text"}, "definition": {"type": "string", "minLength": 1, "maxLength": 2000, "pattern": ".*\\S.*"},
+        "domains": {"type": "array", "minItems": 1, "maxItems": 50, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+        "aliases": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+        "excluded_meanings": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 2000, "pattern": ".*\\S.*"}},
+        "source_ids": {"type": "array", "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "pattern": "^FUE-FIC-[0-9]{6}$"}},
+        "status": {"enum": ["pending_review", "approved", "rejected", "deprecated"]},
+        "origin": {"$ref": "#/$defs/origin"},
+        "global_approval": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/approval"}]},
+        "revision": {"type": "integer", "minimum": 1},
+        "fictitious": {"type": "boolean"}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "approved"}}}, "then": {"properties": {"global_approval": {"$ref": "#/$defs/approval"}}}, "else": {"properties": {"global_approval": {"type": "null"}}}},
+        {"if": {"properties": {"category": {"const": "normativos"}, "status": {"const": "approved"}}, "required": ["category", "status"]}, "then": {"properties": {"source_ids": {"minItems": 1}}}}
+      ]
+    },
+    "selectionRecord": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "position_ref", "function_digests", "knowledge_id", "decision", "approval_scope", "reviewer_type", "reviewer_id", "reason", "decided_at", "catalog_version", "fictitious"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^SEL-FIC-[0-9]{6}$"}, "position_ref": {"$ref": "#/$defs/text"},
+        "function_digests": {"type": "array", "minItems": 1, "maxItems": 50, "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+        "knowledge_id": {"type": "string", "pattern": "^CON-[0-9]{6}$"},
+        "decision": {"enum": ["selected", "discarded"]}, "approval_scope": {"const": "position"},
+        "reviewer_type": {"const": "human"}, "reviewer_id": {"$ref": "#/$defs/text"}, "reason": {"type": "string", "minLength": 1, "maxLength": 2000, "pattern": ".*\\S.*"},
+        "decided_at": {"$ref": "#/$defs/rfc3339Timestamp"},
+        "catalog_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "fictitious": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+services:
+  editor-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: catalogo-puestos:3.0-demo
+    container_name: editor-cedulas-3-demo
+    entrypoint: ["python", "-m", "editor_catalogo.editor_catalogo"]
+    command:
+      - --json
+      - /datos/puestos_demo.json
+      - --output-dir
+      - /salida
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8766"
+    volumes:
+      - ./demo_ficticia/datos:/datos
+      - ./demo_ficticia/salida:/salida
+    ports:
+      - "8766:8766"
+    restart: "no"

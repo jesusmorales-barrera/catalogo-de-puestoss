@@ -1,0 +1,25 @@
+﻿# Reglas de finales de línea del Editor 3.0
+* text=auto
+
+# Python, Docker y archivos de configuración
+*.py text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.html text eol=lf
+.dockerignore text eol=lf
+.gitignore text eol=lf
+
+# Scripts de PowerShell
+*.ps1 text eol=crlf
+
+# Archivos binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.docx binary
+*.xlsx binary

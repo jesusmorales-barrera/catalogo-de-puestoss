@@ -62,7 +62,7 @@ class EditorFrontendContractTests(unittest.TestCase):
         self.assertIn("generationAttempt?'Reintentar generación'", self.script)
 
     def test_generated_content_uses_safe_text_properties(self):
-        self.assertIn("proposalText.value=d.texto??''", self.script)
+        self.assertIn("const categories=d.conocimientos??{}", self.script)
         self.assertIn("proposalStatus.textContent", self.script)
         self.assertIn("proposalWordCount.textContent", self.script)
         self.assertNotIn("proposalText.innerHTML", self.script)
@@ -99,8 +99,16 @@ class EditorFrontendContractTests(unittest.TestCase):
 
     def test_word_limit_is_checked_before_acceptance(self):
         self.assertIn("countProposalWords", self.script)
-        self.assertIn("count===0||count>80", self.script)
-        self.assertIn("${count}/80 palabras", self.script)
+        self.assertIn("count===0||count>200", self.script)
+        self.assertIn("${count}/200 palabras", self.script)
+
+    def test_categories_unify_without_headings_for_save(self):
+        for element in ("proposalTechnical", "proposalAdministrative", "proposalNormative"):
+            self.assertIn(element, self.parser.elements)
+        self.assertIn("function unifyProposal()", self.script)
+        self.assertIn("proposalText.value=unifyProposal()", self.script)
+        self.assertIn("readonly", self.parser.elements["proposalText"][1])
+        self.assertIn("const text=proposalText.value.trim()", self.script)
 
     def test_error_states_are_explicit(self):
         for status in ("status===400", "status===409", "status===410"):

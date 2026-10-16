@@ -1,0 +1,36 @@
+﻿services:
+  editor-catalogo:
+    image: jmoralesbarrrera/catalogo-puestos:3.0.0
+    container_name: editor-catalogo-3
+    entrypoint: ["python", "-m", "editor_catalogo.editor_catalogo"]
+    command:
+      - --json
+      - /datos/puestos_unificados.json
+      - --output-dir
+      - /salida
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8765"
+    volumes:
+      - ./entrada:/datos
+      - ./salida:/salida
+    ports:
+      - "8765:8765"
+    restart: unless-stopped
+
+  catalogo-puestos:
+    image: jmoralesbarrrera/catalogo-puestos:3.0.0
+    container_name: generador-catalogo-3
+    volumes:
+      - ./entrada:/datos:ro
+      - ./salida:/salida
+    command:
+      - /datos/puestos_unificados.json
+      - --logo
+      - /app/ssh_logo_recortado.png
+      - --salida
+      - /salida/catalogo_puestos.docx
+    profiles:
+      - generador
+    restart: "no"

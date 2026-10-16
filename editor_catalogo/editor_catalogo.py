@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -30,6 +31,7 @@ from editor_catalogo.knowledge_generator import (
     count_words,
 )
 from editor_catalogo.providers.simulated import SimulatedProvider
+from editor_catalogo.fixture_reference_api import query_fixture_references
 
 
 DEFAULT_JSON = Path(r"D:\DOCUMENTOS\Codex\Catalogo de puestos\entrada\puestos_unificados.json")
@@ -78,8 +80,8 @@ class CatalogStore:
         return data
 
     def revision(self):
-        # JavaScript cannot represent nanosecond timestamps precisely as numbers.
-        return str(self.path.stat().st_mtime_ns)
+        # Revision basada en contenido para detectar cambios con igual mtime.
+        return hashlib.sha256(self.path.read_bytes()).hexdigest()
 
     @staticmethod
     def key(record, index):
@@ -336,6 +338,7 @@ class Handler(BaseHTTPRequestHandler):
     store: CatalogStore
     knowledge_generator: KnowledgeGenerator
     proposals: PendingProposalStore
+    fixture_reference_catalog: Path | None = None
 
     def log_message(self, format, *args):
         print(f"{self.address_string()} - {format % args}")
@@ -551,6 +554,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = urlparse(self.path).path
+        reference_route = re.fullmatch(
+            r"/api/puestos-ficticios/([^/]+)/referencias-conocimientos", path
+        )
+        if reference_route:
+            return self.query_knowledge_references(unquote(reference_route.group(1)))
         proposal_route = re.fullmatch(
             r"/api/puestos/([^/]+)/propuestas-conocimientos", path
         )
@@ -576,6 +584,30 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"error": str(exc)}, HTTPStatus.INTERNAL_SERVER_ERROR)
         finally:
             GENERATION_LOCK.release()
+
+    def query_knowledge_references(self, key):
+        """Consulta aislada de referencias ficticias; nunca utiliza self.store."""
+        if self.fixture_reference_catalog is None:
+            return self.send_json(
+                {"error": "La consulta ficticia no está habilitada."},
+                HTTPStatus.NOT_FOUND,
+            )
+        try:
+            payload = self.read_json()
+            result = query_fixture_references(
+                catalog_path=self.fixture_reference_catalog,
+                position_id=key,
+                payload=payload,
+            )
+            return self.send_json(result)
+        except (ValueError, TypeError) as exc:
+            return self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+        except Exception:
+            # No devolver rutas del servidor ni datos potencialmente sensibles.
+            return self.send_json(
+                {"error": "No fue posible consultar el catálogo ficticio."},
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+            )
 
     def generate_knowledge_proposal(self, key):
         try:
@@ -635,11 +667,14 @@ def main():
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--fixture-reference-catalog", type=Path, default=None,
+                        help="Habilita consultas solo contra un catálogo de conocimientos ficticio")
     args = parser.parse_args()
     Handler.store = CatalogStore(args.json, args.output_dir)
     # Etapa 1B-1: la única implementación habilitada es la simulada.
     Handler.knowledge_generator = KnowledgeGenerator(SimulatedProvider())
     Handler.proposals = PendingProposalStore()
+    Handler.fixture_reference_catalog = args.fixture_reference_catalog
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     print(f"Editor disponible en http://{args.host}:{args.port}")
     print(f"Catálogo: {Handler.store.path}")

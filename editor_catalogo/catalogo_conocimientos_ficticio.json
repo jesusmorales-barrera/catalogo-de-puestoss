@@ -1,0 +1,61 @@
+{
+  "dataset_type": "fixture", "schema_version": "1.0", "catalog_version": "0.1.0", "generated_at": "2026-10-14T12:00:00-06:00",
+  "categories": [
+    {"id": "tecnicos", "definition": "Métodos, sistemas, herramientas y saberes propios del trabajo sustantivo."},
+    {"id": "administrativos", "definition": "Conocimientos de planeación, organización, documentación, seguimiento y control."},
+    {"id": "normativos", "definition": "Marcos y disposiciones respaldados por fuentes documentales verificables."}
+  ],
+  "sources": [
+    {"id": "FUE-FIC-000001", "title": "Manual ficticio de resguardo de expedientes meteorológicos", "document_type": "manual ficticio de prueba", "version": "1.0", "status": "active", "fictitious": true}
+  ],
+  "knowledge": [
+    {
+      "id": "CON-000001", "category": "tecnicos", "fictitious": true, "preferred_label": "Clasificación y organización documental",
+      "definition": "Principios y métodos ficticios para ordenar documentos mediante criterios consistentes.",
+      "domains": ["archivo ficticio", "gestión documental ficticia"], "aliases": ["Organización ficticia de expedientes"],
+      "excluded_meanings": ["Clasificar expedientes imaginarios"], "source_ids": [], "status": "approved",
+      "origin": {"type": "human"},
+      "global_approval": {"scope": "global", "reviewer_type": "human", "reviewer_id": "REVISOR-FICTICIO-01", "approved_at": "2026-10-14T12:00:00-06:00", "fictitious": true},
+      "revision": 1
+    },
+    {
+      "id": "CON-000002", "category": "administrativos", "fictitious": true, "preferred_label": "Control y trazabilidad de préstamos documentales",
+      "definition": "Métodos ficticios de registro, seguimiento y devolución de documentación en circulación.",
+      "domains": ["archivo ficticio", "control administrativo ficticio"], "aliases": ["Trazabilidad ficticia de expedientes"],
+      "excluded_meanings": ["Controlar préstamos internos"], "source_ids": [], "status": "approved",
+      "origin": {"type": "human"},
+      "global_approval": {"scope": "global", "reviewer_type": "human", "reviewer_id": "REVISOR-FICTICIO-01", "approved_at": "2026-10-14T12:00:00-06:00", "fictitious": true},
+      "revision": 1
+    },
+    {
+      "id": "CON-000003", "category": "normativos", "fictitious": true, "preferred_label": "Principios ficticios de resguardo documental meteorológico",
+      "definition": "Criterios ficticios documentados para el resguardo de expedientes meteorológicos imaginarios.",
+      "domains": ["archivo meteorológico ficticio"], "aliases": [], "excluded_meanings": [], "source_ids": ["FUE-FIC-000001"],
+      "status": "approved", "origin": {"type": "human"},
+      "global_approval": {"scope": "global", "reviewer_type": "human", "reviewer_id": "REVISOR-FICTICIO-01", "approved_at": "2026-10-14T12:00:00-06:00", "fictitious": true},
+      "revision": 1
+    },
+    {
+      "id": "CON-000004", "category": "tecnicos", "fictitious": true, "preferred_label": "Metadatos ficticios de estaciones imaginarias",
+      "definition": "Candidato de IA pendiente de revisión sobre descripción de registros ficticios.",
+      "domains": ["meteorología ficticia"], "aliases": [], "excluded_meanings": [], "source_ids": [], "status": "pending_review",
+      "origin": {"type": "ai", "model": "modelo-ficticio-no-ejecutado"}, "global_approval": null, "revision": 1
+    }
+  ],
+  "selection_records": [
+    {
+      "id": "SEL-FIC-000001", "position_ref": "PUESTO-FICTICIO-ARCHIVO-01", "fictitious": true,
+      "function_digests": ["1111111111111111111111111111111111111111111111111111111111111111"],
+      "knowledge_id": "CON-000001", "decision": "selected", "approval_scope": "position", "reviewer_type": "human",
+      "reviewer_id": "REVISOR-FICTICIO-02", "reason": "Pertinente únicamente para el puesto ficticio evaluado.",
+      "decided_at": "2026-10-14T12:30:00-06:00", "catalog_version": "0.1.0"
+    },
+    {
+      "id": "SEL-FIC-000002", "position_ref": "PUESTO-FICTICIO-ARCHIVO-01", "fictitious": true,
+      "function_digests": ["2222222222222222222222222222222222222222222222222222222222222222"],
+      "knowledge_id": "CON-000004", "decision": "discarded", "approval_scope": "position", "reviewer_type": "human",
+      "reviewer_id": "REVISOR-FICTICIO-02", "reason": "Candidato de IA sin validación global suficiente.",
+      "decided_at": "2026-10-14T12:31:00-06:00", "catalog_version": "0.1.0"
+    }
+  ]
+}
